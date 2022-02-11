@@ -7,8 +7,8 @@ Servo fr_vesc;
 Servo bl_vesc;
 Servo br_vesc;
 
-float front_torque_factor = 0.6; // what percentage of commanded torque the front motors get
-float rear_torque_factor = 0.4;  // what percentage of commanded torque the rear motors get
+float front_torque_factor = 1; // what percentage of commanded torque the front motors get
+float rear_torque_factor = 1;  // what percentage of commanded torque the rear motors get
 int player = 0;
 
 void onConnect() {
@@ -57,26 +57,35 @@ void loop() {
         return;
     }
 
+    // Use bumpers as dead man's switch:
+    if(Ps3.data.button.l1 && Ps3.data.button.r1) {
+      // Write joystick info to VESCs
+      int16_t l_torque = Ps3.data.analog.stick.ly;
+      int16_t r_torque = Ps3.data.analog.stick.ry;
+      fl_vesc.write(map_joystick_to_angle(front_torque_factor * l_torque));
+      fr_vesc.write(map_joystick_to_angle(front_torque_factor * r_torque));
+      bl_vesc.write(map_joystick_to_angle(rear_torque_factor * l_torque));
+      br_vesc.write(map_joystick_to_angle(rear_torque_factor * r_torque));
+    }
+    else {
+      fl_vesc.write(90);
+      fr_vesc.write(90);
+      bl_vesc.write(90);
+      br_vesc.write(90);
+    }
+
     // Print joystick info
-    //Serial.print("LJY:");
-    //Serial.print(Ps3.data.analog.stick.ly, DEC);
+    Serial.print("LJX:");
+    Serial.print(Ps3.data.analog.stick.lx, DEC);
 
-    //Serial.print(" RJY: ");
-    //Serial.print(Ps3.data.analog.stick.ry, DEC);
+    Serial.print(" RJX: ");
+    Serial.print(Ps3.data.analog.stick.rx, DEC);
 
-    // Write joystick info to VESCs
-    int16_t l_torque = Ps3.data.analog.stick.ly;
-    int16_t r_torque = Ps3.data.analog.stick.ry;
-    fl_vesc.write(map_joystick_to_angle(front_torque_factor * l_torque));
-    fr_vesc.write(map_joystick_to_angle(front_torque_factor * r_torque));
-    bl_vesc.write(map_joystick_to_angle(rear_torque_factor * l_torque));
-    br_vesc.write(map_joystick_to_angle(rear_torque_factor * r_torque));
+    //Serial.print(" FL: "); Serial.print(map_joystick_to_angle(front_torque_factor * l_torque));
+    //Serial.print(" FR: "); Serial.print(map_joystick_to_angle(front_torque_factor * r_torque));
+    //Serial.print(" BL: "); Serial.print(map_joystick_to_angle(rear_torque_factor * l_torque));
+    //Serial.print(" FR: "); Serial.print(map_joystick_to_angle(rear_torque_factor * r_torque));
 
-    Serial.print(" FL: "); Serial.print(map_joystick_to_angle(front_torque_factor * l_torque));
-    Serial.print(" FR: "); Serial.print(map_joystick_to_angle(front_torque_factor * r_torque));
-    Serial.print(" BL: "); Serial.print(map_joystick_to_angle(rear_torque_factor * l_torque));
-    Serial.print(" FR: "); Serial.print(map_joystick_to_angle(rear_torque_factor * r_torque));
-    
 
     // Print battery info
     int battery = Ps3.data.status.battery;
