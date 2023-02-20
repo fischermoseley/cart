@@ -75,11 +75,11 @@ void loop() {
     }
 
     // Print joystick info
-    Serial.print("LJX:");
-    Serial.print(Ps3.data.analog.stick.lx, DEC);
+    Serial.print("LJY:");
+    Serial.print(Ps3.data.analog.stick.ly, DEC);
 
-    Serial.print(" RJX: ");
-    Serial.print(Ps3.data.analog.stick.rx, DEC);
+    Serial.print(" RJY: ");
+    Serial.print(Ps3.data.analog.stick.ry, DEC);
 
     //Serial.print(" FL: "); Serial.print(map_joystick_to_angle(front_torque_factor * l_torque));
     //Serial.print(" FR: "); Serial.print(map_joystick_to_angle(front_torque_factor * r_torque));
